@@ -31,7 +31,7 @@ export default function ExtendPage() {
           <li><span className="font-mono text-xs">loopbench.simulators</span> · probe() 和 make()，返回 Gymnasium Env</li>
           <li><span className="font-mono text-xs">loopbench.policies</span> · make() 和 improve()，动作从 select_action 来</li>
           <li><span className="font-mono text-xs">loopbench.suites</span> · 一个 Suite，任务 id 用 spec 里的词汇</li>
-          <li><span className="font-mono text-xs">loopbench.adapters</span> · 只探测上游能不能 import</li>
+          <li><span className="font-mono text-xs">loopbench.adapters</span> · 探测上游能不能 import。真正的 gym.make / infer 在 loopbench-bridges</li>
         </ul>
       </section>
 

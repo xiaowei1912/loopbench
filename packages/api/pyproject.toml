@@ -9,8 +9,10 @@ dependencies = [
   "loopbench-spec>=0.1",
   "loopbench-evalkit>=0.1",
   "loopbench-sim-reference>=0.1",
+  "loopbench-sim-mujoco>=0.1",
   "loopbench-policies>=0.1",
   "loopbench-adapters>=0.1",
+  "loopbench-bridges>=0.1",
   "loopbench-example-suite>=0.1",
 ]
 

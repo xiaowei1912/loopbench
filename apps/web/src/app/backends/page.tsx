@@ -27,7 +27,7 @@ export default function BackendsPage() {
       <p className="font-mono text-[11px] tracking-[0.18em] text-oxide">BACKENDS</p>
       <h1 className="font-display mt-2 text-4xl">后端目录</h1>
       <p className="mt-3 text-sm leading-6 text-muted-foreground">
-        已安装的仿真、策略和基准来自 entry point。上游栈只做探测：能 import 就标成可用，不能 import 就留下真实的接入点，不把 Isaac 或 LIBERO 的代码搬进来。
+        可运行表示这个进程里就能评测。适配器已接入表示插件会调用上游自己的构造函数，但本机没有安装那个库或权重，提交任务会被拒绝。
       </p>
 
       {error ? <div className="mt-6"><ErrorBlock detail={error} onRetry={load} /></div> : null}
@@ -41,6 +41,7 @@ export default function BackendsPage() {
                 key={item.name}
                 title={item.name}
                 available={item.available}
+                support={item.support}
                 meta={item.gym_id}
                 body={item.detail}
                 href={item.upstream_url}
@@ -54,6 +55,7 @@ export default function BackendsPage() {
                 key={item.name}
                 title={item.name}
                 available={item.available}
+                support={item.support}
                 meta={item.needs_privileged ? "needs_privileged" : "deployable"}
                 body={item.detail}
                 href={item.upstream_url}
@@ -118,6 +120,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Row({
   title,
   available,
+  support,
   meta,
   body,
   href,
@@ -125,16 +128,18 @@ function Row({
 }: {
   title: string;
   available: boolean;
+  support?: string;
   meta?: string;
   body: string;
   href?: string;
   hrefLabel?: string;
 }) {
+  const label = available ? (support === "adapter" ? "已安装" : "可运行") : support === "adapter" ? "适配器已接入" : "未安装";
   return (
     <article className="py-3">
       <div className="flex flex-wrap items-center gap-2">
         <h3 className="text-sm font-medium">{title}</h3>
-        <Badge variant={available ? "secondary" : "outline"}>{available ? "可用" : "未安装"}</Badge>
+        <Badge variant={available ? "secondary" : "outline"}>{label}</Badge>
         {meta ? <span className="font-mono text-[11px] text-muted-foreground">{meta}</span> : null}
       </div>
       <p className="mt-1 text-sm leading-6 text-muted-foreground">{body}</p>

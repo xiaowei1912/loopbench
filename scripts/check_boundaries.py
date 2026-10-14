@@ -10,7 +10,16 @@ ROOT = pathlib.Path(__file__).resolve().parents[1]
 RULES = {
     "packages/spec": ("loopbench_sim_reference", "loopbench_policies", "loopbench_evalkit", "loopbench_api"),
     "packages/sim-reference": ("loopbench_policies", "loopbench_evalkit", "loopbench_api", "loopbench_adapters"),
+    "packages/sim-mujoco": ("loopbench_policies", "loopbench_evalkit", "loopbench_api", "loopbench_adapters", "loopbench_bridges"),
     "packages/policies": ("loopbench_sim_reference", "loopbench_evalkit", "loopbench_api", "loopbench_adapters"),
+    "packages/bridges": (
+        "loopbench_sim_reference",
+        "loopbench_sim_mujoco",
+        "loopbench_policies",
+        "loopbench_evalkit",
+        "loopbench_api",
+        "loopbench_adapters",
+    ),
     "packages/evalkit": ("loopbench_sim_reference", "loopbench_policies", "loopbench_api", "loopbench_adapters"),
     "packages/adapters": ("loopbench_sim_reference", "loopbench_policies", "loopbench_evalkit", "loopbench_api"),
     "packages/api": ("loopbench_sim_reference", "loopbench_policies"),

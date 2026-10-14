@@ -44,6 +44,8 @@ export default function EvaluatePage() {
 
   const selectedSuite = catalog?.suites.find((item) => item.name === suite);
   const selectedPolicy = catalog?.policies.find((item) => item.name === policy);
+  const selectedSim = catalog?.simulators.find((item) => item.name === simulator);
+  const blocked = selectedPolicy?.available === false || selectedSim?.available === false;
   const episodeCount = (selectedSuite?.tasks.length ?? 0) * (selectedSuite?.cells.length ?? 0) * episodes;
 
   const warning = useMemo(() => {
@@ -126,7 +128,7 @@ export default function EvaluatePage() {
                 <SelectContent>
                   {catalog.policies.map((item) => (
                     <SelectItem key={item.name} value={item.name}>
-                      {item.name}
+                      {item.available ? item.name : `${item.name} · 未安装`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -140,7 +142,7 @@ export default function EvaluatePage() {
                 <SelectContent>
                   {catalog.simulators.map((item) => (
                     <SelectItem key={item.name} value={item.name}>
-                      {item.name}
+                      {item.available ? item.name : `${item.name} · 未安装`}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -149,11 +151,15 @@ export default function EvaluatePage() {
           </div>
 
           {selectedSuite ? <p className="text-sm leading-6 text-muted-foreground">{selectedSuite.description}</p> : null}
+          {selectedSim ? <p className="text-sm leading-6 text-muted-foreground">{selectedSim.detail}</p> : null}
           {selectedPolicy ? (
             <p className="text-sm leading-6 text-muted-foreground">
               {selectedPolicy.detail}
               {selectedPolicy.needs_privileged ? " 评测器会交出真值，这条记录是上界。" : " 评测时不读 privileged。"}
             </p>
+          ) : null}
+          {blocked ? (
+            <p className="text-sm leading-6 text-muted-foreground">这个组合还不能提交。先装上对应的库和权重，目录里的状态会变成可运行。</p>
           ) : null}
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -186,10 +192,10 @@ export default function EvaluatePage() {
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button type="button" disabled={busy} onClick={() => start("loop")} className="h-10 px-4">
+            <Button type="button" disabled={busy || blocked} onClick={() => start("loop")} className="h-10 px-4">
               跑闭环
             </Button>
-            <Button type="button" variant="outline" disabled={busy} onClick={() => start("eval")} className="h-10 px-4">
+            <Button type="button" variant="outline" disabled={busy || blocked} onClick={() => start("eval")} className="h-10 px-4">
               只评测
             </Button>
           </div>

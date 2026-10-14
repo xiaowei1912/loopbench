@@ -21,7 +21,7 @@ export default function HomePage() {
       </h1>
       <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
         普通工程师要在几分钟里走完模型、仿真、基准、评测和结果，并且把失败变成下一轮的场景和数据。Loopbench
-        把这条闭环拆成可以单独安装的包。默认仿真是纯 CPU 的准静态桌面，Isaac Lab、MuJoCo、LIBERO 以插件接进来，不打进这个仓库。
+        把这条闭环拆成可以单独安装的包。参考桌面和 MuJoCo 桌面在这个进程里就能跑。Isaac Lab、ManiSkill、LIBERO、RoboCasa、RoboTwin，以及 ACT、OpenVLA、GR00T、π0、π0.5，都有调用官方构造函数的适配器；库和权重不打进仓库。
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <Link href="/evaluate" className={cn(buttonVariants({ size: "lg" }), "h-10 px-4")}>

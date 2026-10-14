@@ -8,6 +8,8 @@
 | --- | --- | --- |
 | `packages/spec` | loopbench-spec | 任务 id、因素名字、Suite、trace、注册表。改字段等于改所有仓库的合同。 |
 | `packages/sim-reference` | loopbench-sim-reference | 桌面几何、颜色、相机平移、打滑。不拥有“什么叫一个好基准”。 |
+| `packages/sim-mujoco` | loopbench-sim-mujoco | MuJoCo 桌面。接触和重力在这里，任务 id 仍用 spec。 |
+| `packages/bridges` | loopbench-bridges | Isaac Lab、ManiSkill、LIBERO、RoboCasa、RoboTwin、ACT、OpenVLA、GR00T、π0、π0.5 的官方调用。不内置那些库。 |
 | `packages/policies` | loopbench-policies | oracle、视觉伺服、标定、`SelectActionAdapter`。不拥有环境米制。 |
 | `packages/evalkit` | loopbench-evalkit | 跑 episode、归因、场景生成、闭环。不拥有任何一个仿真的实现。 |
 | `packages/adapters` | loopbench-adapters | 上游探测和接入说明。没有 `make()`。 |
@@ -18,7 +20,7 @@
 
 ## 安装顺序
 
-spec → sim-reference 与 policies 与 adapters 与 example-suite → evalkit → api → cli。
+spec → sim-reference、sim-mujoco、policies、adapters、bridges、example-suite → evalkit → api → cli。
 
 `make install` 按这个顺序做 editable install。包之间用分发名依赖（`loopbench-spec>=0.1`），不写死磁盘路径，这样拆成多个 git 仓库之后 pyproject 不用改。
 

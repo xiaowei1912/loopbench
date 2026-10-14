@@ -26,7 +26,7 @@ Isaac Lab-Arena 把场景、本体和任务拆开再组合，用来规模化评�
 
 MuJoCo：<https://github.com/google-deepmind/mujoco>
 
-Loopbench 的对应物是 `ReferenceBackend.make()` 返回一个 Gymnasium Env，并在 `loopbench.simulators` 注册。换后端时 suite 不动。适配器目录在界面的「后端」页，`isaac-lab` 和 `mujoco` 未安装时显示未安装。
+Loopbench 里 MuJoCo 是可运行的第二个仿真，代码在 `packages/sim-mujoco`。Isaac Lab 的适配器在 `packages/bridges/loopbench_bridges/simulators.py` 的 `open_isaac`，调用 `gym.make("Isaac-Lift-Cube-Franka-v0")` 之前会 import `isaaclab_tasks`。没装 Isaac Sim 时界面标成「适配器已接入」，API 返回 409。对照表在 `docs/coverage.md`。
 
 ## 3. RoboTwin、RoboVerse、RoboCasa、LIBERO、ManiSkill
 

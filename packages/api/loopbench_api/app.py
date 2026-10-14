@@ -135,6 +135,12 @@ def create_job(request: JobRequest) -> dict:
         raise HTTPException(404, f"unknown policy {request.policy}")
     if request.suite not in suites():
         raise HTTPException(404, f"unknown suite {request.suite}")
+    sim_probe = simulator(request.simulator).probe()
+    pol_probe = policies()[request.policy].probe()
+    if not sim_probe.get("available", True):
+        raise HTTPException(409, sim_probe.get("detail") or f"{request.simulator} is not runnable")
+    if not pol_probe.get("available", True):
+        raise HTTPException(409, pol_probe.get("detail") or f"{request.policy} is not runnable")
     job_id = store.new_id("job")
     _job(job_id, status="queued", progress=0, message="排队", kind=request.kind)
     threading.Thread(target=_run_job, args=(job_id, request), daemon=True).start()

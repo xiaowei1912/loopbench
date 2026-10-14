@@ -13,6 +13,7 @@ class ReferenceBackend:
             "name": self.name,
             "available": True,
             "kind": "simulator",
+            "support": "runnable",
             "detail": "准静态桌面，纯 NumPy，不需要 GPU。CI 和产品默认走这里。",
             "gym_id": register_gym(),
             "upstream": "Gymnasium Env",

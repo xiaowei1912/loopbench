@@ -1,0 +1,21 @@
+[project]
+name = "loopbench-sim-mujoco"
+version = "0.1.0"
+description = "MuJoCo tabletop for Loopbench. Same task ids as the reference sim, real contact and gravity."
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "gymnasium>=1.0",
+  "mujoco>=3.1",
+  "loopbench-spec>=0.1",
+]
+
+[project.entry-points."loopbench.simulators"]
+mujoco = "loopbench_sim_mujoco.plugin:MujocoBackend"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_sim_mujoco*"]

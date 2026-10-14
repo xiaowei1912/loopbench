@@ -1,0 +1,40 @@
+[project]
+name = "loopbench-bridges"
+version = "0.1.0"
+description = "Adapters that call Isaac Lab, ManiSkill, LIBERO, RoboCasa, RoboTwin, GR00T, π0, π0.5, OpenVLA, and ACT."
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "loopbench-spec>=0.1",
+]
+
+[project.entry-points."loopbench.simulators"]
+isaac-lab = "loopbench_bridges.simulators:IsaacLabBackend"
+maniskill = "loopbench_bridges.simulators:ManiSkillBackend"
+libero = "loopbench_bridges.simulators:LiberoBackend"
+robocasa = "loopbench_bridges.simulators:RoboCasaBackend"
+robotwin = "loopbench_bridges.simulators:RoboTwinBackend"
+
+[project.entry-points."loopbench.policies"]
+act = "loopbench_bridges.policies:ActPlugin"
+openvla = "loopbench_bridges.policies:OpenVLAPlugin"
+gr00t = "loopbench_bridges.policies:Gr00tPlugin"
+pi0 = "loopbench_bridges.policies:Pi0Plugin"
+pi05 = "loopbench_bridges.policies:Pi05Plugin"
+
+[project.entry-points."loopbench.suites"]
+isaac_franka = "loopbench_bridges.suites:isaac_franka"
+maniskill_v1 = "loopbench_bridges.suites:maniskill_v1"
+libero_spatial = "loopbench_bridges.suites:libero_spatial"
+libero_object = "loopbench_bridges.suites:libero_object"
+libero_goal = "loopbench_bridges.suites:libero_goal"
+libero_10 = "loopbench_bridges.suites:libero_10"
+robocasa_kitchen = "loopbench_bridges.suites:robocasa_kitchen"
+robotwin_v2 = "loopbench_bridges.suites:robotwin_v2"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_bridges*"]

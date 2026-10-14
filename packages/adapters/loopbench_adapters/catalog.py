@@ -1,9 +1,8 @@
-"""Upstream systems this workspace does not vendor.
+"""Import probe for upstream libraries.
 
-Each record is the real integration seam: the import name, the Gymnasium id
-or the function a separate repository would call, and where that code lives.
-`make()` is intentionally absent. Installing Isaac Lab or LIBERO is a different
-repository; this one only reports whether that import is present.
+The callable adapters live in loopbench-bridges and loopbench-sim-mujoco.
+This catalog only answers "is the third-party module importable?" and records
+the function those adapters call.
 """
 
 from __future__ import annotations
@@ -36,14 +35,14 @@ UPSTREAM = (
         "id": "mujoco",
         "module": "mujoco",
         "role": "物理后端",
-        "glue": "独立仓库实现 gymnasium.Env，在 loopbench.simulators 注册自己的 Backend.make()。",
+        "glue": "loopbench_sim_mujoco.MujocoTabletop 在本进程里 mj_step。Gym id Loopbench/MuJoCo-Tabletop-v0。",
         "url": "https://github.com/google-deepmind/mujoco",
     },
     {
         "id": "maniskill",
         "module": "mani_skill",
         "role": "操作基准",
-        "glue": "gym.make('PickCube-v1')。任务 id 已经写在 loopbench-spec 的 pick_place / stack 上。",
+        "glue": "gym.make('PickCube-v1', obs_mode='rgb', control_mode='pd_ee_delta_pose')。见 loopbench_bridges.simulators.open_maniskill。",
         "url": "https://github.com/haosulab/ManiSkill",
     },
     {
@@ -66,6 +65,41 @@ UPSTREAM = (
         "role": "机器人仿真栈",
         "glue": "suite.load_composite_controller_config + robosuite.make。LIBERO 和 RoboCasa 都坐在它上面。",
         "url": "https://github.com/ARISE-Initiative/robosuite",
+    },
+    {
+        "id": "robotwin",
+        "module": "envs",
+        "role": "双臂基准",
+        "glue": "importlib.import_module('envs.' + task).setup_demo / take_action / check_success。",
+        "url": "https://github.com/RoboTwin-Platform/RoboTwin",
+    },
+    {
+        "id": "act",
+        "module": "lerobot",
+        "role": "VLA / 策略",
+        "glue": "ACTPolicy.from_pretrained(checkpoint).select_action(batch)。环境变量 LOOPBENCH_ACT_CHECKPOINT。",
+        "url": "https://github.com/huggingface/lerobot",
+    },
+    {
+        "id": "openvla",
+        "module": "transformers",
+        "role": "VLA / 策略",
+        "glue": "AutoModelForVision2Seq.from_pretrained(checkpoint, trust_remote_code=True).predict_action。LOOPBENCH_OPENVLA_CHECKPOINT。",
+        "url": "https://github.com/openvla/openvla",
+    },
+    {
+        "id": "gr00t",
+        "module": "gr00t",
+        "role": "VLA / 策略",
+        "glue": "Gr00tPolicy(embodiment_tag, model_path, device).get_action(observation)。LOOPBENCH_GR00T_CHECKPOINT。",
+        "url": "https://github.com/NVIDIA/Isaac-GR00T",
+    },
+    {
+        "id": "openpi",
+        "module": "openpi",
+        "role": "VLA / 策略",
+        "glue": "policy_config.create_trained_policy(get_config('pi0_droid'|'pi05_droid'), checkpoint).infer(example)['actions']。",
+        "url": "https://github.com/Physical-Intelligence/openpi",
     },
 )
 

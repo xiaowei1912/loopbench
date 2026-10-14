@@ -12,6 +12,7 @@ export type PolicyInfo = {
   name: string;
   available: boolean;
   kind: string;
+  support?: string;
   needs_privileged: boolean;
   detail: string;
   upstream?: string;
@@ -22,6 +23,7 @@ export type SimulatorInfo = {
   name: string;
   available: boolean;
   kind: string;
+  support?: string;
   detail: string;
   gym_id?: string;
   upstream?: string;

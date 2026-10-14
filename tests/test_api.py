@@ -26,6 +26,16 @@ def _wait(client: TestClient, job_id: str, timeout: float = 90) -> dict:
     return job
 
 
+def test_uninstalled_simulator_is_rejected_before_a_job_starts():
+    client = TestClient(app)
+    response = client.post(
+        "/api/jobs",
+        json={"kind": "eval", "suite": "isaac_franka", "policy": "oracle", "simulator": "isaac-lab"},
+    )
+    assert response.status_code == 409
+    assert "Isaac" in response.json()["detail"]
+
+
 def test_catalog_lists_the_example_suite():
     client = TestClient(app)
     response = client.get("/api/catalog")

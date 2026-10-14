@@ -8,7 +8,7 @@
 
 评测 → 读失败 → 生成场景和数据 → 改进策略 → 用同一套基准再评
 
-默认仿真是纯 CPU 的准静态桌面，CI 和本机都不需要 GPU。Isaac Lab、MuJoCo、ManiSkill、LIBERO、RoboCasa、LeRobot 以插件和目录的形式接进来，代码不打进这个仓库。
+参考桌面和 MuJoCo 桌面在 CI 里运行，不需要 GPU。Isaac Lab、ManiSkill、LIBERO、RoboCasa、RoboTwin，以及 ACT、OpenVLA、GR00T、π0、π0.5，由 `packages/bridges` 调用官方构造函数。库和权重不打进这个仓库。对照表在 `docs/coverage.md`。
 
 界面是中文，代码和 API 用英文。
 
@@ -20,6 +20,8 @@
 | --- | --- | --- |
 | `packages/spec` | pydantic | 仿真、策略、评测 |
 | `packages/sim-reference` | spec、Gymnasium、NumPy | 策略、评测 |
+| `packages/sim-mujoco` | spec、Gymnasium、MuJoCo | 策略、评测、bridges |
+| `packages/bridges` | spec、NumPy | 仿真、策略、评测 |
 | `packages/policies` | spec、NumPy | 仿真、评测 |
 | `packages/evalkit` | spec、NumPy、Pillow | 仿真、策略 |
 | `packages/adapters` | spec | 仿真、策略、评测 |
@@ -52,7 +54,7 @@ cd apps/web && npm install && npm run dev
 - 界面：<http://127.0.0.1:43123>
 - API：<http://127.0.0.1:43124/api/health>
 
-`make install` 会按依赖顺序安装 `packages/` 下的八个包。这个环境没有 `python3-venv` 时，Makefile 使用 `--break-system-packages`。CI 里改用虚拟环境：`make install PIP=.venv/bin/pip BREAK=`。
+`make install` 会按依赖顺序安装 `packages/` 下的包。MuJoCo 渲染需要本机有 `libosmesa6`（CI 会装）。这个环境没有 `python3-venv` 时，Makefile 使用 `--break-system-packages`。CI 里改用虚拟环境：`make install PIP=.venv/bin/pip BREAK=`。
 
 Docker：
 
@@ -83,6 +85,7 @@ docker compose up --build
 - [需求](docs/requirements.md)
 - [架构](docs/architecture.md)
 - [仓库地图](docs/repositories.md)
+- [平台覆盖](docs/coverage.md)
 - [怎么扩展](docs/extending.md)
 - [学习路径](docs/learning.md)
 - [运行手册](docs/runbook.md)
@@ -94,4 +97,4 @@ docker compose up --build
 make test
 ```
 
-覆盖插件发现、第三方套件、oracle 名义工况、相机平移下视觉策略抓空、闭环不退步，以及 API 的评测和闭环落盘。
+覆盖插件发现、第三方套件、oracle 名义工况、相机平移下视觉策略抓空、闭环不退步、MuJoCo 抓取放置，以及用假模块检查 Isaac、ManiSkill、LIBERO、RoboCasa、RoboTwin 和四类 VLA 的调用形状。API 会拒绝还没安装的仿真。
