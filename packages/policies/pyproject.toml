@@ -1,0 +1,17 @@
+[project]
+name = "loopbench-policies"
+version = "0.1.0"
+description = "Oracle and vision policies for Loopbench. select_action matches LeRobot."
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "loopbench-spec>=0.1"]
+
+[project.entry-points."loopbench.policies"]
+oracle = "loopbench_policies.plugin:OraclePlugin"
+vision_v1 = "loopbench_policies.plugin:VisionPlugin"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_policies*"]

@@ -1,0 +1,16 @@
+[project]
+name = "loopbench-example-suite"
+version = "0.1.0"
+description = "Example benchmark repository. Depends only on loopbench-spec."
+requires-python = ">=3.11"
+dependencies = ["loopbench-spec>=0.1"]
+
+[project.entry-points."loopbench.suites"]
+tabletop_smoke = "loopbench_example_suite:smoke"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_example_suite*"]

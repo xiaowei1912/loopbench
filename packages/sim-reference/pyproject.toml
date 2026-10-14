@@ -1,0 +1,20 @@
+[project]
+name = "loopbench-sim-reference"
+version = "0.1.0"
+description = "Reference tabletop simulator for Loopbench. Gymnasium-compatible, no GPU."
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=1.26",
+  "gymnasium>=1.0",
+  "loopbench-spec>=0.1",
+]
+
+[project.entry-points."loopbench.simulators"]
+reference = "loopbench_sim_reference.plugin:ReferenceBackend"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_sim_reference*"]

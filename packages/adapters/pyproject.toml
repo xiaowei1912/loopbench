@@ -1,0 +1,16 @@
+[project]
+name = "loopbench-adapters"
+version = "0.1.0"
+description = "Probe catalog for Isaac Lab, MuJoCo, ManiSkill, LIBERO, LeRobot, RoboCasa."
+requires-python = ">=3.11"
+dependencies = ["loopbench-spec>=0.1"]
+
+[project.entry-points."loopbench.adapters"]
+upstream = "loopbench_adapters.catalog:UpstreamCatalog"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_adapters*"]
