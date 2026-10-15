@@ -12,6 +12,7 @@ const NAV = [
   { href: "/evaluate", label: "评测" },
   { href: "/runs", label: "记录" },
   { href: "/backends", label: "后端" },
+  { href: "/architecture", label: "架构" },
   { href: "/extend", label: "扩展" },
 ];
 

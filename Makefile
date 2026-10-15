@@ -2,7 +2,7 @@ PYTHON ?= python3
 PIP ?= $(PYTHON) -m pip
 BREAK ?= --break-system-packages
 
-PKGS := packages/spec packages/sim-reference packages/sim-mujoco packages/policies packages/evalkit packages/adapters packages/bridges packages/example-suite packages/api packages/cli
+PKGS := packages/spec packages/sim-reference packages/sim-mujoco packages/policies packages/transport packages/evalkit packages/adapters packages/bridges packages/example-suite packages/api packages/cli
 
 .PHONY: install test boundaries
 

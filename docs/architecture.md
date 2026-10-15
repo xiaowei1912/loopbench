@@ -4,17 +4,17 @@
 
 ```text
 apps/web  --HTTP-->  loopbench-api  -->  loopbench-evalkit
-                                              |
-                                              | registry (entry points)
-                                              v
-                         +--------------------+---------------------+
-                         |                    |                     |
-                  simulators             policies                suites
-                  reference              oracle, vision_v1       probe, mini, v1
-                  (另一个仓库)            (另一个仓库)             example-suite
+                         |                    |
+                         |                    | registry (entry points)
+                         |                    v
+                         |     simulators / policies / suites
+                         |
+                         +--> loopbench-transport   策略进程 (TCP JSON)
 ```
 
-API 进程只 import `loopbench_spec` 和 `loopbench_evalkit`。仿真和策略是安装依赖，这样 entry point 才存在，但 API 源码里没有 `import loopbench_sim_reference`。
+五个平面、实验 YAML 和协议号写在 [平台](platform.md)。API 源码不 import 仿真模块，也不 import 策略模块。策略如果在另一个进程，API 只打开 `RemotePolicy`。
+
+API 进程安装了仿真和策略，这样 entry point 才存在，但源码里没有 `import loopbench_sim_reference`。
 
 ## 一次闭环
 
@@ -77,7 +77,9 @@ Gym id：`Loopbench/Tabletop-v0`。
 | 方法 | 路径 | 作用 |
 | --- | --- | --- |
 | GET | `/api/health` | 存活 |
+| GET | `/api/platform` | 协议号，以及采用了哪些公开项目的哪一条接缝 |
 | GET | `/api/catalog` | 仿真、策略、套件、任务、上游探测 |
+| POST | `/api/experiments` | 一份实验 JSON。仿真不可运行时返回 409，不启动任务 |
 | POST | `/api/jobs` | `{kind: eval\|loop, suite, policy, simulator, episodes_per_cell, seed, capture_frames}` |
 | GET | `/api/jobs/{id}` | 进度。任务在进程内的线程里跑 |
 | GET | `/api/runs` | 评测摘要 |

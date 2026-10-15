@@ -8,4 +8,6 @@
 - `loopbench.policies`
 - `loopbench.suites`
 
+`composition` 里还有企业评测的合同：`EnvironmentDefinition`（场景 × 本体 × 任务）、`Experiment`（shared + runs）、协议号 `loopbench.experiment/1`。仿真器自己决定能不能编译某一对场景和本体。
+
 环境步进对齐 Gymnasium 的 `reset` / `step`。策略动作对齐 LeRobot 的 `select_action`。

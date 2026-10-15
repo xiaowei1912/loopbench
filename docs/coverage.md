@@ -39,6 +39,19 @@
 
 π0 和 π0.5 是两个插件。动作块按时间展开，每步交给环境一行，不截成 4 维。4 维截断只属于参考桌面和 MuJoCo 桌面。
 
+## 企业架构接缝
+
+公开评测系统里采用的是平面，不是源码。对照在 [平台](platform.md)。
+
+| 来源 | 落在这个仓库的位置 | 没有搬进来的部分 |
+| --- | --- | --- |
+| Isaac Lab-Arena | `EnvironmentDefinition`、`experiments/*.yaml`、`loopbench experiment` | OSMO 多机调度、Isaac 资产 |
+| RoboVerse | 每个仿真一个 handler，`accepts(scene, embodiment)` | MetaSim 本体 |
+| XPolicyLab | `loopbench policy-serve`，TCP JSON `reset` / `act` / `close` | 他们的策略目录和 WebSocket 栈 |
+| vla-evaluation-harness | 每条实验结果带 `loopbench.experiment/1` | 基准 Docker 镜像 |
+| LeRobot | Gymnasium 环境 + entry point，episode 汇总到套件 | 数据集下载 |
+| praxis-eval | bridges 可选安装，评测包拥有 rollout | 远程集群 |
+
 ## CI 里会发生什么
 
 `python` job 安装 `libosmesa6`，跑边界检查和 pytest。其中一条是 MuJoCo 抓取放置成功，以及用假的上游模块断言 gym id、BDDL 路径、`take_action` 和 `infer` 被调用。Isaac、LIBERO、GR00T 的权重不会在 CI 下载。

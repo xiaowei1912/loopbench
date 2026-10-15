@@ -20,5 +20,13 @@ class ReferenceBackend:
             "upstream_url": "https://gymnasium.farama.org/api/env/",
         }
 
+    def accepts(self, definition) -> None:
+        scene = getattr(definition, "scene", None)
+        embodiment = getattr(definition, "embodiment", None)
+        if (scene, embodiment) != ("tabletop", "planar_gripper"):
+            raise ValueError(
+                f"Reference simulator compiles tabletop × planar_gripper, not {scene} × {embodiment}."
+            )
+
     def make(self, *, expose_privileged: bool = False, render_size: int = 160) -> TabletopEnv:
         return TabletopEnv(expose_privileged=expose_privileged, render_size=render_size)

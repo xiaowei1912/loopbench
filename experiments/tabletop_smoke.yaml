@@ -1,0 +1,15 @@
+# 本地实验。同一套基准上并排跑上界和视觉策略。
+# 形状来自 Isaac Lab-Arena 的 Experiment：shared 是所有 run 的默认值，每个 run 选基准和策略。
+name: tabletop_smoke
+shared:
+  simulator: reference
+  seed: 0
+  episodes_per_cell: 1
+  continue_on_error: false
+runs:
+  - name: oracle
+    suite: tabletop_smoke
+    policy: oracle
+  - name: vision
+    suite: tabletop_smoke
+    policy: vision_v1

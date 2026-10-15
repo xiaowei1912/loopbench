@@ -22,5 +22,11 @@ class MujocoBackend:
             "upstream_url": "https://github.com/google-deepmind/mujoco",
         }
 
+    def accepts(self, definition) -> None:
+        scene = getattr(definition, "scene", None)
+        embodiment = getattr(definition, "embodiment", None)
+        if (scene, embodiment) != ("tabletop", "planar_gripper"):
+            raise ValueError(f"MuJoCo tabletop compiles tabletop × planar_gripper, not {scene} × {embodiment}.")
+
     def make(self, *, expose_privileged: bool = False, render_size: int = 160) -> MujocoTabletop:
         return MujocoTabletop(expose_privileged=expose_privileged, render_size=render_size)

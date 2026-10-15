@@ -8,6 +8,7 @@ dependencies = [
   "uvicorn>=0.32",
   "loopbench-spec>=0.1",
   "loopbench-evalkit>=0.1",
+  "loopbench-transport>=0.1",
   "loopbench-sim-reference>=0.1",
   "loopbench-sim-mujoco>=0.1",
   "loopbench-policies>=0.1",

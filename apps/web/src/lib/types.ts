@@ -50,6 +50,17 @@ export type AdapterInfo = {
   detail: string;
 };
 
+export type PlatformSource = {
+  id: string;
+  url: string;
+  adopted: string;
+};
+
+export type Platform = {
+  protocol: string;
+  sources: PlatformSource[];
+};
+
 export type Catalog = {
   simulators: SimulatorInfo[];
   policies: PolicyInfo[];

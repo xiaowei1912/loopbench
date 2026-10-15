@@ -10,6 +10,7 @@ RUN pip install --no-cache-dir -e packages/spec \
  && pip install --no-cache-dir -e packages/sim-reference \
  && pip install --no-cache-dir -e packages/sim-mujoco \
  && pip install --no-cache-dir -e packages/policies \
+ && pip install --no-cache-dir -e packages/transport \
  && pip install --no-cache-dir -e packages/evalkit \
  && pip install --no-cache-dir -e packages/adapters \
  && pip install --no-cache-dir -e packages/bridges \

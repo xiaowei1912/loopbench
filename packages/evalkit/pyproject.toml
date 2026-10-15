@@ -3,7 +3,7 @@ name = "loopbench-evalkit"
 version = "0.1.0"
 description = "Evaluation, failure analysis, scenario generation, and the closed loop."
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26", "pillow>=10.4", "loopbench-spec>=0.1"]
+dependencies = ["numpy>=1.26", "pillow>=10.4", "pyyaml>=6", "loopbench-spec>=0.1"]
 
 [project.entry-points."loopbench.suites"]
 tabletop_probe = "loopbench_evalkit.suites:probe"

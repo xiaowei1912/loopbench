@@ -21,11 +21,14 @@ export default function HomePage() {
       </h1>
       <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
         普通工程师要在几分钟里走完模型、仿真、基准、评测和结果，并且把失败变成下一轮的场景和数据。Loopbench
-        把这条闭环拆成可以单独安装的包。参考桌面和 MuJoCo 桌面在这个进程里就能跑。Isaac Lab、ManiSkill、LIBERO、RoboCasa、RoboTwin，以及 ACT、OpenVLA、GR00T、π0、π0.5，都有调用官方构造函数的适配器；库和权重不打进仓库。
+        把这条闭环拆成可以单独安装的包。场景、仿真 handler、策略进程和实验 YAML 是五层企业评测平面，协议号写进每一次结果。参考桌面和 MuJoCo 桌面在这个进程里就能跑。Isaac Lab、ManiSkill、LIBERO、RoboCasa、RoboTwin，以及 ACT、OpenVLA、GR00T、π0、π0.5，都有调用官方构造函数的适配器；库和权重不打进仓库。
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <Link href="/evaluate" className={cn(buttonVariants({ size: "lg" }), "h-10 px-4")}>
           跑一轮 Probe
+        </Link>
+        <Link href="/architecture" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-10 px-4")}>
+          看评测平面
         </Link>
         <Link href="/backends" className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-10 px-4")}>
           看后端目录

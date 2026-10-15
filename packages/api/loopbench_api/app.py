@@ -11,10 +11,13 @@ from pydantic import BaseModel, Field
 
 from loopbench_api import store
 from loopbench_evalkit.analysis import analyze
+from loopbench_evalkit.experiment import run_experiment
 from loopbench_evalkit.loop import run_closed_loop
 from loopbench_evalkit.runner import evaluate
 from loopbench_evalkit.scenarios import generate_scenarios
+from loopbench_spec.composition import SOURCES, PROTOCOL, Experiment, RunSpec
 from loopbench_spec.registry import adapters, policies, simulator, simulators, suite, suites, tasks
+from loopbench_transport.wire import RemotePolicy
 
 app = FastAPI(title="Loopbench", version="0.1.0")
 app.add_middleware(
@@ -106,6 +109,59 @@ def _run_job(job_id: str, request: JobRequest) -> None:
 @app.get("/api/health")
 def health() -> dict:
     return {"ok": True, "service": "loopbench"}
+
+
+def _open_policy(run: RunSpec):
+    if run.endpoint:
+        return RemotePolicy(run.endpoint, name=run.policy, needs_privileged=bool(run.needs_privileged))
+    plugin = policies()[run.policy]
+    if not plugin.probe().get("available", True):
+        raise RuntimeError(plugin.probe().get("detail") or f"{run.policy} is not runnable")
+    return plugin.make()
+
+
+def _run_experiment_job(job_id: str, experiment: Experiment) -> None:
+    try:
+        _job(job_id, status="running", progress=0.05, message="实验开始")
+        result = run_experiment(experiment, open_simulator=simulator, open_policy=_open_policy)
+        failed = result["summary"]["failed"]
+        _job(
+            job_id,
+            status="failed" if failed else "succeeded",
+            progress=1,
+            message="实验结束" if not failed else "实验里有失败的 run",
+            experiment=result,
+        )
+    except Exception as exc:
+        _job(job_id, status="failed", message=str(exc), progress=1)
+
+
+@app.get("/api/platform")
+def platform() -> dict:
+    return {"protocol": PROTOCOL, "sources": list(SOURCES)}
+
+
+@app.post("/api/experiments")
+def create_experiment(body: dict) -> dict:
+    try:
+        experiment = Experiment.model_validate(body)
+    except Exception as exc:
+        raise HTTPException(422, str(exc)) from exc
+    for run in experiment.runs:
+        name = run.simulator or experiment.shared.simulator
+        if name not in simulators():
+            raise HTTPException(404, f"unknown simulator {name}")
+        if not run.endpoint and run.policy not in policies():
+            raise HTTPException(404, f"unknown policy {run.policy}")
+        if run.suite and run.suite not in suites():
+            raise HTTPException(404, f"unknown suite {run.suite}")
+        probe = simulator(name).probe()
+        if not probe.get("available", True):
+            raise HTTPException(409, probe.get("detail") or f"{name} is not runnable")
+    job_id = store.new_id("job")
+    _job(job_id, status="queued", progress=0, message="排队", kind="experiment")
+    threading.Thread(target=_run_experiment_job, args=(job_id, experiment), daemon=True).start()
+    return {"id": job_id}
 
 
 @app.get("/api/catalog")

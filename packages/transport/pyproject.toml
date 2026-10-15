@@ -1,0 +1,13 @@
+[project]
+name = "loopbench-transport"
+version = "0.1.0"
+description = "Policy process split. The simulator stays in one process; the policy speaks JSON lines over TCP."
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["loopbench_transport*"]

@@ -22,7 +22,7 @@ Isaac Lab 用 Gymnasium 注册管理式环境：
 
 仓库：<https://github.com/isaac-sim/IsaacLab>
 
-Isaac Lab-Arena 把场景、本体和任务拆开再组合，用来规模化评测：<https://github.com/isaac-sim/IsaacLab-Arena>
+Isaac Lab-Arena 把场景、本体和任务拆开再组合，用来规模化评测：<https://github.com/isaac-sim/IsaacLab-Arena>。Loopbench 的对应物是 `loopbench_spec.composition.EnvironmentDefinition`，仿真器用 `accepts` 拒绝自己编译不了的一对。实验 YAML 在 `experiments/`。说明在 `docs/platform.md`。
 
 MuJoCo：<https://github.com/google-deepmind/mujoco>
 
@@ -51,7 +51,7 @@ XPolicyLab 把「N 个策略 × M 个环境」收成「一个策略适配器 + �
 - 说明：<https://xpolicylab.github.io/>
 - RoboTwin 里的用法：<https://robotwin-platform.github.io/doc/usage/xpolicylab.html>
 
-Loopbench 的 entry point 是同一类问题的小版本：评测器不 import 策略仓库。它没有做 websocket 服务。真的要评 GR00T 或 π0，策略进程应按 XPolicyLab 或 LeRobot 的方式单独起，环境进程只拿到动作。
+Loopbench 的 entry point 是同一类问题的小版本：评测器不 import 策略仓库。策略进程用 `loopbench policy-serve`，线上是 TCP 的 JSON 行（`reset` / `act` / `close`），实现在 `packages/transport`。没有搬他们的 WebSocket 栈和策略目录。真的要评 GR00T 或 π0，那个进程里装权重，评测进程只拿到动作。
 
 ## 5. GR00T、π0 / π0.5、OpenVLA、ACT
 
@@ -82,6 +82,6 @@ Loopbench 的 entry point 是同一类问题的小版本：评测器不 import �
 
 产品化在这里的意思是：目录、进度、落盘、空状态和失败说明，而不是再写一个训练框架。
 
-界面四件事：选已安装的插件、看进度、读切片、对照闭环前后。后端页把「没装 Isaac」显示成未安装，而不是假装跑过。
+界面五件事：选已安装的插件、看进度、读切片、对照闭环前后、读评测平面。后端页把「没装 Isaac」显示成未安装，而不是假装跑过。架构页列出五个平面和协议号。
 
 扩展页和 `packages/example-suite` 给下一个人留了抄写模板。

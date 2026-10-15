@@ -80,3 +80,30 @@ policy = SelectActionAdapter(pretrained, name="openvla")
 ## 加一个上游探测
 
 `loopbench.adapters` 的 `probe()` 返回一组 `{id, module, role, glue, url, available, detail}`。不要在这里 import 仿真实现。glue 字符串写上游真实的函数名，方便人去那个仓库接。
+
+## 加一次实验
+
+实验文件不写进 Python。`shared` 是默认仿真、种子和每格条数。每个 run 恰好有一个目标：已安装的 `suite`，或一个 `environment`（场景、本体、任务）。
+
+```yaml
+name: tabletop_smoke
+shared:
+  simulator: reference
+  seed: 0
+  episodes_per_cell: 1
+runs:
+  - name: oracle
+    suite: tabletop_smoke
+    policy: oracle
+```
+
+仿真如果实现了 `accepts(definition)`，组合对不上就在开跑前失败。`shared.continue_on_error: true` 时，失败的 run 记下来，后面的 run 继续。
+
+策略在另一个进程时，run 增加：
+
+```yaml
+endpoint: 127.0.0.1:43126
+needs_privileged: true
+```
+
+`needs_privileged` 只在远程 oracle 这类真值策略上打开。视觉策略不要开。启动命令是 `loopbench policy-serve --policy oracle --port 43126`。评测器自己不 import transport；CLI 和 API 把 `RemotePolicy` 交给 `run_experiment`。

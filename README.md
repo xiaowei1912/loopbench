@@ -23,7 +23,8 @@
 | `packages/sim-mujoco` | spec、Gymnasium、MuJoCo | 策略、评测、bridges |
 | `packages/bridges` | spec、NumPy | 仿真、策略、评测 |
 | `packages/policies` | spec、NumPy | 仿真、评测 |
-| `packages/evalkit` | spec、NumPy、Pillow | 仿真、策略 |
+| `packages/transport` | NumPy | 仿真、策略、评测 |
+| `packages/evalkit` | spec、NumPy、Pillow、PyYAML | 仿真、策略、transport |
 | `packages/adapters` | spec | 仿真、策略、评测 |
 | `packages/example-suite` | spec | 其它一切 |
 | `packages/api` | spec、evalkit（安装时带上插件，代码里不 import 仿真） | `loopbench_sim_reference`、`loopbench_policies` |
@@ -42,6 +43,13 @@ make install
 export PATH="$HOME/.local/bin:$PATH"
 loopbench catalog
 loopbench loop --suite tabletop_probe --policy vision_v1 --seed 0
+loopbench experiment experiments/tabletop_smoke.yaml
+```
+
+策略也可以单独起一个进程，评测进程只连 `host:port`：
+
+```bash
+loopbench policy-serve --policy oracle --port 43126
 ```
 
 开界面：
@@ -84,6 +92,7 @@ docker compose up --build
 - [计划](docs/plan.md)
 - [需求](docs/requirements.md)
 - [架构](docs/architecture.md)
+- [企业评测平面](docs/platform.md)
 - [仓库地图](docs/repositories.md)
 - [平台覆盖](docs/coverage.md)
 - [怎么扩展](docs/extending.md)
@@ -97,4 +106,4 @@ docker compose up --build
 make test
 ```
 
-覆盖插件发现、第三方套件、oracle 名义工况、相机平移下视觉策略抓空、闭环不退步、MuJoCo 抓取放置，以及用假模块检查 Isaac、ManiSkill、LIBERO、RoboCasa、RoboTwin 和四类 VLA 的调用形状。API 会拒绝还没安装的仿真。
+覆盖插件发现、第三方套件、oracle 名义工况、相机平移下视觉策略抓空、闭环不退步、MuJoCo 抓取放置，以及用假模块检查 Isaac、ManiSkill、LIBERO、RoboCasa、RoboTwin 和四类 VLA 的调用形状。API 会拒绝还没安装的仿真。企业平面另有一组测试：实验 YAML、组合拒绝、TCP 上的 oracle，以及 `POST /api/experiments`。
