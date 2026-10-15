@@ -1,87 +1,44 @@
-# 学习路径
+# 学习文档
 
-按职位里的工作往下读。每一节都说明 Loopbench 里哪段代码对应它，以及上游仓库在哪里。这个 demo 跑通的是接缝和参考桌面，不是那些仓库的 GPU 训练。
+这套文档写给有嵌入式和 CI/CD 经验、还没做过机器人评测的人。不要求你训过模型，也不要求你有 GPU。
 
-## 1. 仿真、训练、评测流水线
+Loopbench 在这台机器上能跑完的是一条评测闭环：模型进仿真，仿真按基准出结果，失败被归到一个场景因素，策略改一版，同一套基准再评一次。Isaac、大模型权重不在这个仓库里。学完入门，你应该能自己把这条闭环跑通，并读懂一次失败。学完深入，你应该能接一个新的仿真或策略，并知道哪些上游仓库值得读。
 
-先分清三条线，不要合成一个脚本。
+## 怎么读
 
-- 仿真产生观测和接触。参考实现在 `packages/sim-reference`。
-- 策略只消费观测。`packages/policies/loopbench_policies/vision.py` 的 `select_action`。
-- 评测编排种子、因素和汇总。`packages/evalkit/loopbench_evalkit/runner.py`。
+入门按 01 到 07 的顺序。每一章末尾有「做完再往下」。做完 07，你能独立跑通闭环、读一条失败记录、看懂 CI 在守什么。
 
-训练不在这个仓库。LeRobot 的训练循环和 `PreTrainedPolicy` 在 <https://github.com/huggingface/lerobot>。接入点是 `select_action`，说明在 <https://huggingface.co/docs/lerobot/bring_your_own_policies>。
+深入从 10 开始，可以按手头的工作跳着读。上游地图放在最后，它是索引，不是第一天的教材。
 
-## 2. Isaac Sim / Isaac Lab 和 MuJoCo
+| 章节 | 你会拿到什么 |
+| --- | --- |
+| [01 从固件概念对照过来](learn/01-firmware-map.md) | 一张表：控制周期、传感器、看门狗、HAL、corner、CI job 在这个仓库里叫什么 |
+| [02 第一天下午](learn/02-first-afternoon.md) | 装好、跑通 `tabletop_smoke`、在界面上看到一次成功和一次失败 |
+| [03 一条 episode](learn/03-one-episode.md) | `reset` / `step` / `select_action` 按时间展开，对应到文件 |
+| [04 工况和失败](learn/04-corners-and-failures.md) | 因素格子、单因素归因、七种失败模式、探针上的实测数字 |
+| [05 真值是调试口](learn/05-debug-port.md) | `privileged`、oracle、标定，以及为什么量产策略不能读真值 |
+| [06 包就是固件分层](learn/06-modules.md) | 依赖方向、entry point、怎么加一个只依赖契约的基准 |
+| [07 你已经会的流水线](learn/07-pipeline.md) | GitHub Actions、Docker、409 门禁，以及它和 HIL 的关系 |
+| [10 两个仿真](learn/10-simulators.md) | 参考桌面和 MuJoCo 差在哪，Gymnasium 契约长什么样 |
+| [11 基准](learn/11-benchmarks.md) | ManiSkill、LIBERO、RoboCasa、RoboTwin 各测什么，本仓库接到哪一层 |
+| [12 策略和 VLA](learn/12-policies.md) | 从颜色伺服到 ACT、OpenVLA、GR00T、π0，权重为什么不进仓库 |
+| [13 闭环拆开](learn/13-closed-loop.md) | 评测、归因、生成场景、改进、再评测，以及 25% 到 92% 怎么读 |
+| [14 企业评测平面](learn/14-planes.md) | 场景 × 本体 × 任务、实验 YAML、策略进程、协议号 |
+| [15 读仓库的顺序](learn/15-read-the-repo.md) | 文件清单：先读哪份，哪份可以先跳过 |
+| [术语](learn/glossary.md) | 英文标识和中文对照 |
+| [练习](learn/exercises.md) | 七个不需要 GPU 的练习，文末有对照结果 |
+| [上游地图](learn/upstream.md) | 职位里那些 GitHub 仓库，和本仓库的对应位置 |
 
-Isaac Lab 用 Gymnasium 注册管理式环境：
+工程文档仍然分开：
 
-`gym.register(id=..., entry_point="isaaclab.envs:ManagerBasedRLEnv", kwargs={"env_cfg_entry_point": ...})`
+- 怎么把服务跑起来：[运行手册](runbook.md)
+- 模块边界和安装顺序：[仓库地图](repositories.md)
+- 五个平面的来源：[平台](platform.md)
+- 哪些平台是可运行、哪些只是适配器：[覆盖](coverage.md)
+- 加仿真或加基准的合同：[扩展](extending.md)
 
-文档：<https://isaac-sim.github.io/IsaacLab/main/source/tutorials/03_envs/register_rl_env_gym.html>
+## 你已经会的东西
 
-仓库：<https://github.com/isaac-sim/IsaacLab>
+嵌入式里你负责过「传感器进来、控制律算出执行器指令、超时要停、量产固件不能依赖调试口」。这里的一条 episode 就是这个循环，周期不是微秒级中断，而是仿真里的一步。
 
-Isaac Lab-Arena 把场景、本体和任务拆开再组合，用来规模化评测：<https://github.com/isaac-sim/IsaacLab-Arena>。Loopbench 的对应物是 `loopbench_spec.composition.EnvironmentDefinition`，仿真器用 `accepts` 拒绝自己编译不了的一对。实验 YAML 在 `experiments/`。说明在 `docs/platform.md`。
-
-MuJoCo：<https://github.com/google-deepmind/mujoco>
-
-Loopbench 里 MuJoCo 是可运行的第二个仿真，代码在 `packages/sim-mujoco`。Isaac Lab 的适配器在 `packages/bridges/loopbench_bridges/simulators.py` 的 `open_isaac`，调用 `gym.make("Isaac-Lift-Cube-Franka-v0")` 之前会 import `isaaclab_tasks`。没装 Isaac Sim 时界面标成「适配器已接入」，API 返回 409。对照表在 `docs/coverage.md`。
-
-## 3. RoboTwin、RoboVerse、RoboCasa、LIBERO、ManiSkill
-
-这些是基准和场景资产，不是又一个策略网络。
-
-| 项目 | 和本仓库任务词汇的关系 | 地址 |
-| --- | --- | --- |
-| ManiSkill | pick_place、stack | <https://github.com/haosulab/ManiSkill> |
-| LIBERO | pick_place、sort，语言和 BDDL | <https://github.com/Lifelong-Robot-Learning/LIBERO> |
-| RoboCasa | drawer，厨房操作 | <https://github.com/robocasa/robocasa> |
-| robosuite | LIBERO 和 RoboCasa 下面的仿真栈 | <https://github.com/ARISE-Initiative/robosuite> |
-| RoboTwin 2.0 | 双臂、干净和随机两套设置 | <https://github.com/RoboTwin-Platform/RoboTwin> |
-| RoboVerse | 多仿真统一的数据与评测 | <https://github.com/RoboVerseOrg/RoboVerse> |
-
-LIBERO 的用法是 `get_benchmark_dict()[suite].get_task(i)` 拿出语言和 `bddl_file`，再交给 `OffScreenRenderEnv`。ManiSkill 是 `gym.make("PickCube-v1")`。这些字符串写在 `packages/adapters/loopbench_adapters/catalog.py`，方便对照，不在这里执行。
-
-## 4. XPolicyLab
-
-XPolicyLab 把「N 个策略 × M 个环境」收成「一个策略适配器 + 一个环境客户端」。策略服务和环境通过 websocket 分开，Isaac Sim 可以在一台机器，VLA 在另一台。
-
-- 仓库：<https://github.com/XPolicyLab/XPolicyLab>
-- 说明：<https://xpolicylab.github.io/>
-- RoboTwin 里的用法：<https://robotwin-platform.github.io/doc/usage/xpolicylab.html>
-
-Loopbench 的 entry point 是同一类问题的小版本：评测器不 import 策略仓库。策略进程用 `loopbench policy-serve`，线上是 TCP 的 JSON 行（`reset` / `act` / `close`），实现在 `packages/transport`。没有搬他们的 WebSocket 栈和策略目录。真的要评 GR00T 或 π0，那个进程里装权重，评测进程只拿到动作。
-
-## 5. GR00T、π0 / π0.5、OpenVLA、ACT
-
-| 策略 | 地址 | 在这里怎么接 |
-| --- | --- | --- |
-| NVIDIA Isaac GR00T | <https://github.com/NVIDIA/Isaac-GR00T> | 独立环境和权重。动作对上之后包进 `select_action`。 |
-| π0 / π0.5（openpi） | <https://github.com/Physical-Intelligence/openpi> | 同上。不要把 JAX 依赖装进评测器。 |
-| OpenVLA | <https://github.com/openvla/openvla> | `SelectActionAdapter` 收 Tensor。 |
-| ACT | LeRobot 里的 `act` 策略 | 同一个 `select_action`。 |
-
-本仓库的 `vision_v1` 不是这些模型的替代品。它是一个会在光照、相机、摩擦、杂乱上以可解释的方式失败的伺服，用来把归因和再评测跑通。
-
-## 6. 失败分析和自动生成场景
-
-读 `packages/evalkit/loopbench_evalkit/analysis.py` 和 `scenarios.py`。
-
-单因素格子只改一个因素。delta 相对全名义工况。交互格留在 episode 表里，不写进那条结论。这是为了避免「又暗又偏相机」被同时算进两个原因。
-
-生成的场景有三种：
-
-- stress：在已经塌的格子上换种子
-- counterfactual：同一颗种子，把那个因素拨回名义，用来核对是不是它
-- calibration：光照扫描，当作带标签的采集，不计入得分
-
-`vision` 的 `improve()` 用的就是标定这一路：特权相机只在采集时打开，原型冻结之后再评测不再读真值。
-
-## 7. 把开源项目产品化
-
-产品化在这里的意思是：目录、进度、落盘、空状态和失败说明，而不是再写一个训练框架。
-
-界面五件事：选已安装的插件、看进度、读切片、对照闭环前后、读评测平面。后端页把「没装 Isaac」显示成未安装，而不是假装跑过。架构页列出五个平面和协议号。
-
-扩展页和 `packages/example-suite` 给下一个人留了抄写模板。
+CI 里你负责过「每次提交都跑同一套检查，缺设备的测试不要假装通过」。这里的 GitHub Actions 守的是参考桌面和 MuJoCo。Isaac 没装时 API 返回 409，和「HIL 机架不在这条流水线上，就不要报绿」是同一件事。

@@ -96,7 +96,7 @@ docker compose up --build
 - [仓库地图](docs/repositories.md)
 - [平台覆盖](docs/coverage.md)
 - [怎么扩展](docs/extending.md)
-- [学习路径](docs/learning.md)
+- [学习文档](docs/learning.md)（嵌入式和 CI 背景的入门，以及仿真、基准、策略的深入阅读）
 - [运行手册](docs/runbook.md)
 - [ADR](docs/adr/0001-reference-simulator.md)
 

@@ -12,6 +12,7 @@ Loopbench 要演示的是一条能产品化的评测闭环，不是再包一层�
 
 - 契约包 `loopbench-spec`：任务词汇、因素名字、Suite、EpisodeTrace、entry point 注册表。
 - 参考仿真 `Loopbench/Tabletop-v0`：Gymnasium Env，确定性，纯 NumPy。
+- MuJoCo 桌面 `Loopbench/MuJoCo-Tabletop-v0`：CI 里步进抓取放置。Isaac 等其余仿真是适配器。
 - 两个策略：特权 oracle，以及不读真值的 `vision_v1`。`improve()` 产出 `vision_v2`。
 - 评测、单因素归因、场景生成、闭环比较。
 - 一个只依赖 spec 的示例基准 `tabletop_smoke`，用来证明新仓库不用改评测器。
@@ -20,7 +21,7 @@ Loopbench 要演示的是一条能产品化的评测闭环，不是再包一层�
 
 ## 刻意没做的
 
-- 不把 Isaac Sim、Isaac Lab、MuJoCo、ManiSkill、LIBERO、RoboCasa、LeRobot 的任务代码 vendoring 进来。适配器只探测能不能 import，并写下真实的接入函数。
+- 不把 Isaac Sim、Isaac Lab、ManiSkill、LIBERO、RoboCasa、LeRobot 的任务代码和权重 vendoring 进来。MuJoCo 桌面是本仓库自己的场景，不是上游示例的拷贝。适配器调用官方构造函数，库不在仓库里时 API 返回 409。
 - 不训练 GR00T、π0、OpenVLA、ACT。策略接口对齐 LeRobot 的 `select_action`，`SelectActionAdapter` 可以把返回 Tensor 的对象接进来。权重和 CUDA 留在那些仓库。
 - 不声称杂乱工况已经修好。参考探针里 `clutter=2` 只从 0% 回到 50%。
 
